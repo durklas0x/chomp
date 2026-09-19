@@ -13,7 +13,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var frameIndex = 0
         currentFrames = idleFrames
 
-        timer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) {
+        timer = Timer.scheduledTimer(withTimeInterval: 0.6, repeats: true) {
             [weak self] _ in
             guard let self, let frames = currentFrames else { return }
             frameIndex = (frameIndex + 1) % frames.count
