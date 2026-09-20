@@ -5,9 +5,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let frameInterval = 0.6
     private let idleFrames = ["cat_idle_1", "cat_idle_2"]
-    private let holdFrames = ["cat_hold_1", "cat_hold_2"]
-    private let presentFrames = ["cat_present_1", "cat_present_2"]
-    lazy var tray = Tray(contentView: EmptyView())
+    private let fullFrames = ["cat_full_1", "cat_full_2"]
 
     private var timer: Timer?
     private var currentState: State?
@@ -21,15 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard self.currentFile == nil, let file = urls.first else { return }
 
         self.currentFile = file
-        updateState(.hold)
-    }
-
-    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
-        if self.currentFile != nil {
-            updateState(.present)
-            self.tray.show()
-        }
-        return false
+        updateState(.full)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -44,10 +34,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             switch state {
             case .idle:
                 self.idleFrames
-            case .hold:
-                self.holdFrames
-            case .present:
-                self.presentFrames
+            case .full:
+                self.fullFrames
             }
         self.timer?.invalidate()
 
