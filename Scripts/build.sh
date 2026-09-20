@@ -12,7 +12,3 @@ xcodebuild \
   -configuration Debug \
   -derivedDataPath "$DERIVED_DATA_PATH" \
   build
-
-killall Chomp 2>/dev/null || true
-
-open "$APP_PATH"
