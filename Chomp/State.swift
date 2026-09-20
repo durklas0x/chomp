@@ -1,5 +1,3 @@
-
-
 enum State {
-    case idle, openMouth, full
+    case idle, present, hold
 }

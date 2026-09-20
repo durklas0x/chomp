@@ -1,29 +1,63 @@
 import AppKit
+import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
 
+    private let frameInterval = 0.6
     private let idleFrames = ["cat_idle_1", "cat_idle_2"]
-    private let openMouthFrames = ["cat_open_mouth_1", "cat_open_mouth_2"]
-    private let fullFrames = ["cat_full_1", "cat_full_2"]
+    private let holdFrames = ["cat_hold_1", "cat_hold_2"]
+    private let presentFrames = ["cat_present_1", "cat_present_2"]
+    lazy var tray = Tray(contentView: EmptyView())
 
     private var timer: Timer?
-    private var currentFrames: [String]?
+    private var currentState: State?
+    private var currentFile: URL?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        var frameIndex = 0
-        currentFrames = idleFrames
+        updateState(.idle)
+    }
 
-        timer = Timer.scheduledTimer(withTimeInterval: 0.6, repeats: true) {
-            [weak self] _ in
-            guard let self, let frames = currentFrames else { return }
-            frameIndex = (frameIndex + 1) % frames.count
-            updateDockTile(frames[frameIndex])
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard self.currentFile == nil, let file = urls.first else { return }
+
+        self.currentFile = file
+        updateState(.hold)
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        if self.currentFile != nil {
+            updateState(.present)
+            self.tray.show()
         }
-
+        return false
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        timer?.invalidate()
+        self.timer?.invalidate()
+    }
+
+    private func updateState(_ state: State) {
+        guard self.currentState != state else { return }
+
+        self.currentState = state
+        let frames =
+            switch state {
+            case .idle:
+                self.idleFrames
+            case .hold:
+                self.holdFrames
+            case .present:
+                self.presentFrames
+            }
+        self.timer?.invalidate()
+
+        var frameIndex = 0
+        updateDockTile(frames[frameIndex])
+        self.timer = Timer.scheduledTimer(withTimeInterval: self.frameInterval, repeats: true) {
+            [unowned self] _ in
+            frameIndex = (frameIndex + 1) % frames.count
+            updateDockTile(frames[frameIndex])
+        }
     }
 
     private func updateDockTile(_ frame: String) {
