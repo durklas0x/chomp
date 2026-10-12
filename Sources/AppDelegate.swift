@@ -22,7 +22,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItemButton.target = self
         statusItemButton.action = #selector(statusItemClicked)
 
-        self.filePanel = FilePanel()
+        self.filePanel = FilePanel(onEmptyChanged: { isEmpty in
+            var state: CatState = .idle
+            if !isEmpty {
+                state = .full
+            }
+            self.updateState(state)
+        })
         updateState(.idle)
     }
 

@@ -1,18 +1,32 @@
 import SwiftUI
 
 struct FilePanelContentView: View {
+
+    @Environment(\.displayScale) private var displayScale
+
     let content: FilePanelContent
+    let onClose: () -> Void
 
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("Files")
+                Text("Chomp's belly")
                     .font(.headline)
                 Spacer()
                 Text(content.files.count, format: .number)
                     .font(.subheadline.monospacedDigit())
                     .foregroundStyle(.secondary)
                     .accessibilityLabel("\(content.files.count) files")
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .semibold))
+                        .frame(width: 24, height: 24)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .help("Close panel")
+                .accessibilityLabel("Close panel")
             }
 
             Divider()
@@ -35,24 +49,28 @@ struct FilePanelContentView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 12) {
                         ForEach(Array(content.files.enumerated()), id: \.offset) { _, file in
-                            HStack(spacing: 10) {
-                                FileThumbnailView(fileUrl: file)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(file.lastPathComponent)
-                                        .font(.body)
-                                        .lineLimit(1)
-                                        .truncationMode(.middle)
-                                    Text(file.deletingLastPathComponent().lastPathComponent)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(1)
-                                        .truncationMode(.middle)
+                            FileRowView(file: file)
+                                .onDrag(
+                                    {
+                                        let provider =
+                                            NSItemProvider(contentsOf: file.url) ?? NSItemProvider()
+                                        provider.suggestedName =
+                                            file.url.deletingPathExtension().lastPathComponent
+                                        return provider
+                                    },
+                                    preview: {
+                                        FileRowView(file: file).foregroundStyle(.black)
+                                    }
+                                )
+                                .onDragSessionUpdated({ session in
+                                    if session.phase == .ended(.copy)
+                                        || session.phase == .ended(.move)
+                                    {
+                                        content.files.removeAll(where: { $0.url == file.url })
+                                    }
+                                }).task(id: file.url) {
+                                    await content.loadThumbnail(for: file.url, scale: displayScale)
                                 }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(file.lastPathComponent)
-                            .accessibilityValue(file.deletingLastPathComponent().lastPathComponent)
                         }
                     }
                     .padding(.vertical, 2)

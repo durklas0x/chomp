@@ -2,9 +2,10 @@ import SwiftUI
 
 class FilePanel: NSPanel {
     private let panelSize = NSSize(width: 320, height: 240)
-    private let content = FilePanelContent()
+    private let content: FilePanelContent
 
-    init() {
+    init(onEmptyChanged: @escaping (Bool) -> Void) {
+        content = FilePanelContent(onEmptyChanged: onEmptyChanged)
         super.init(
             contentRect: NSRect(origin: .zero, size: panelSize),
             styleMask: [.nonactivatingPanel],
@@ -26,11 +27,17 @@ class FilePanel: NSPanel {
         backgroundColor = .clear
         hasShadow = true
 
-        let hostingView = NSHostingView(rootView: FilePanelContentView(content: content))
+        let hostingView = NSHostingView(
+            rootView: FilePanelContentView(
+                content: content,
+                onClose: { [weak self] in
+                    self?.orderOut(nil)
+                }))
         hostingView.sizingOptions = []
         hostingView.autoresizingMask = [.width, .height]
 
-        let glassView = NSGlassEffectView(frame: NSRect(origin: .zero, size: panelSize))
+        let glassView: NSGlassEffectView = NSGlassEffectView(
+            frame: NSRect(origin: .zero, size: panelSize))
         glassView.style = .regular
         glassView.cornerRadius = 20
         glassView.contentView = hostingView
@@ -56,6 +63,10 @@ class FilePanel: NSPanel {
     }
 
     func addFiles(_ files: [URL]) {
-        content.files.append(contentsOf: files)
+        for file in files {
+            if !content.files.contains(where: { $0.url == file }) {
+                content.files.append(FileItem(url: file))
+            }
+        }
     }
 }
