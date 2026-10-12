@@ -21,3 +21,6 @@ buildServer.json
 
 # XcodeGen output; regenerate from project.yml
 *.xcodeproj/
+
+# Release artifacts
+dist/
