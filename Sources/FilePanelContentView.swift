@@ -36,12 +36,7 @@ struct FilePanelContentView: View {
                     LazyVStack(alignment: .leading, spacing: 12) {
                         ForEach(Array(content.files.enumerated()), id: \.offset) { _, file in
                             HStack(spacing: 10) {
-                                Image(nsImage: NSWorkspace.shared.icon(forFile: file.path))
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 28, height: 28)
-                                    .accessibilityHidden(true)
-
+                                FileThumbnailView(fileUrl: file)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(file.lastPathComponent)
                                         .font(.body)
