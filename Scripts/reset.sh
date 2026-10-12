@@ -1,5 +1,5 @@
 #!/bin/bash
-BUNDLE_ID="com.martynasgz.Chomp"
+BUNDLE_ID="com.durklas0x.Chomp"
 
 defaults delete "$BUNDLE_ID" 2>/dev/null
 rm -rf ~/Library/Containers/"$BUNDLE_ID"

@@ -18,3 +18,6 @@ xcuserdata/
 # absolute path, regenerate with:
 #   xcode-build-server config -project Chomp.xcodeproj -scheme Chomp
 buildServer.json
+
+# XcodeGen output; regenerate from project.yml
+*.xcodeproj/

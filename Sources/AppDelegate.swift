@@ -7,18 +7,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let idleFrames = ["cat_idle_1", "cat_idle_2"]
     private let fullFrames = ["cat_full_1", "cat_full_2"]
 
+    private var statusItem: NSStatusItem?
+    private var filePanel: FilePanel?
     private var timer: Timer?
-    private var currentState: State?
-    private var currentFile: URL?
+    private var currentState: CatState?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        self.statusItem = statusItem
+
+        let statusItemButton = statusItem.button!
+        statusItemButton.image = NSImage(
+            systemSymbolName: "pet.carrier", accessibilityDescription: nil)
+        statusItemButton.target = self
+        statusItemButton.action = #selector(statusItemClicked)
+
+        self.filePanel = FilePanel()
         updateState(.idle)
     }
 
-    func application(_ application: NSApplication, open urls: [URL]) {
-        guard self.currentFile == nil, let file = urls.first else { return }
+    @objc func statusItemClicked(_ sender: NSStatusBarButton) {
+        guard let panel = self.filePanel, let buttonFrame = self.statusItem?.button?.window?.frame
+        else { return }
 
-        self.currentFile = file
+        panel.toggle(buttonPoint: NSPoint(x: buttonFrame.midX, y: buttonFrame.minY))
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard !urls.isEmpty else { return }
+        guard let panel = self.filePanel else { return }
+        // check for uniqueness later on (don't know if we're going to actually end up storing URLs)
+        panel.addFiles(urls)
         updateState(.full)
     }
 
@@ -26,7 +45,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.timer?.invalidate()
     }
 
-    private func updateState(_ state: State) {
+    private func updateState(_ state: CatState) {
         guard self.currentState != state else { return }
 
         self.currentState = state

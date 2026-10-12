@@ -3,6 +3,8 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+xcodegen generate
+
 DERIVED_DATA_PATH="build"
 APP_PATH="$DERIVED_DATA_PATH/Build/Products/Debug/Chomp.app"
 

@@ -1,3 +1,3 @@
-enum State {
+enum CatState {
     case idle, full
 }
