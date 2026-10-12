@@ -4,7 +4,7 @@
 
 **A little cat with a belly full of files.** Feed Chomp your files, then drag them out wherever you need them.
 
-Requires macOS 27+; release builds include Apple Silicon and Intel binaries.
+Requires macOS 26+; release builds include Apple Silicon and Intel binaries.
 
 ## Overview
 
@@ -54,15 +54,15 @@ Open `Chomp.xcodeproj` to run, or use the included VS Code tasks with `xcode-bui
 To build and verify a universal release package locally:
 
 ```sh
-bash Scripts/package-release.sh 1.0.0
+bash Scripts/package-release.sh 1.0.1
 ```
 
-Run the **Release** GitHub Action with the matching version, or push a `v1.0.0` tag. It builds both architectures, verifies the bundle version and signature, and publishes `Chomp-VERSION-universal.zip` with its SHA-256 checksum. The workflow uses GitHub’s [Xcode 27 runner](https://github.com/actions/runner-images/blob/main/images/macos/xcode-27-arm64-Readme.md).
+Run the **Release** GitHub Action with the matching version, or push a `v1.0.1` tag. It builds both architectures, verifies the bundle version and signature, and publishes `Chomp-VERSION-universal.zip` with its SHA-256 checksum. The workflow uses GitHub’s [Xcode 27 runner](https://github.com/actions/runner-images/blob/main/images/macos/xcode-27-arm64-Readme.md).
 
 Download both published assets, then verify them and generate the tap cask:
 
 ```sh
-bash Scripts/verify-release.sh 1.0.0 /path/to/Chomp-1.0.0-universal.zip /path/to/homebrew-tap/Casks/chomp.rb
+bash Scripts/verify-release.sh 1.0.1 /path/to/Chomp-1.0.1-universal.zip /path/to/homebrew-tap/Casks/chomp.rb
 ```
 
 The checksum file must be beside the ZIP. See [AGENTS.md](AGENTS.md) for version bumps, publishing, and the final Homebrew audit/fetch checks.

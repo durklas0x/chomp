@@ -36,7 +36,7 @@ cask "chomp" do
   desc "Cat that holds files for convenient drag and drop"
   homepage "https://github.com/durklas0x/chomp"
 
-  depends_on macos: :golden_gate
+  depends_on macos: :tahoe
 
   app "Chomp.app"
 end

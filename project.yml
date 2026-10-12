@@ -2,14 +2,14 @@ name: Chomp
 options:
   bundleIdPrefix: com.durklas0x
   deploymentTarget:
-    macOS: "27.0"
+    macOS: "26.0"
   createIntermediateGroups: true
 
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "2"
+    MARKETING_VERSION: "1.0.1"
+    CURRENT_PROJECT_VERSION: "3"
     DEVELOPMENT_TEAM: 3LN4BPHFX4
 
 targets:
